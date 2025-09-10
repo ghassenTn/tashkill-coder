@@ -87,4 +87,4 @@ Tashkil Coder is a Streamlit web application that allows you to create and enhan
 
 *   [Streamlit](https://streamlit.io/) - The web framework used to build the user interface.
 *   [Gemini](https://deepmind.google/technologies/gemini/) - The large language model powering the agent.
-*   [Model-Context-Protocol (MCP)](https://github.com/google/model-context-protocol) - For communication between the agent and the local filesystem.
+*   [Model-Context-Protocol (MCP)](https://github.com/modelcontextprotocol/servers) - For communication between the agent and the local filesystem.
