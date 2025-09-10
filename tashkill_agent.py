@@ -11,40 +11,50 @@ from mcp import StdioServerParameters
 from google.genai import types 
 import warnings
 from dotenv import load_dotenv
+from prompt import prompt
 
 load_dotenv()
 warnings.filterwarnings("ignore")
 
 import logging
 logging.basicConfig(level=logging.ERROR)
-MODEL_ = os.getenv('model')
+MODEL_ = os.getenv('MODEL')
 os.environ["GOOGLE_API_KEY"] = os.getenv('GEMINI_API_KEY')
 TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.getenv('TARGET_FOLDER_PATH'))
-GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN')
-async def get_agent_async():
-  """Creates an ADK Agent equipped with tools from the MCP Server."""
-  toolset_file_system = MCPToolset(
-      connection_params=StdioConnectionParams(
-          server_params = StdioServerParameters(
-            command='npx', 
-            args=["-y",
-                "@modelcontextprotocol/server-filesystem",
-                TARGET_FOLDER_PATH],
-          ),
-      ),
-      
-  ) 
+REACT_MANAGE_PROJECT_MCP_PATH = os.getenv('REACT_MANAGE_PROJECT_MCP_PATH')
 
-  root_agent = LlmAgent(
-    name = "app_developper_v1",
-    model = MODEL_,
-    description = "full stack web developper ",
-    instruction = "You are full stack web developper creator and enhanceur"
-                  "When u receive the idea of an app u must develop it using a old school style"
-                  "any operation in the project must be passed from the provided tools",
-      tools=[toolset_file_system],
-  )
-  return root_agent, toolset_file_system
+async def get_agent_async():
+    """Creates an ADK Agent equipped with tools from the MCP Server."""
+    toolset_file_system = MCPToolset(
+        connection_params=StdioConnectionParams(
+            server_params = StdioServerParameters(
+                command='npx', 
+                args=["-y",
+                    "@modelcontextprotocol/server-filesystem",
+                    TARGET_FOLDER_PATH],
+            ),
+        )
+    )
+    toolset_manage_react_project = MCPToolset(
+            connection_params = StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command='python3',
+                    args=[
+                        REACT_MANAGE_PROJECT_MCP_PATH
+                    ]
+                ),
+                timeout=20
+            )
+        )
+    
+    root_agent = LlmAgent(
+        name = "app_developper_v1",
+        model = MODEL_,
+        description = "full stack web developper ",
+        instruction = prompt,
+        tools=[toolset_file_system, toolset_manage_react_project],
+    )
+    return root_agent, toolset_file_system, toolset_manage_react_project
 
 
 async def async_main(query, session_service, artifacts_service, session):
@@ -52,7 +62,7 @@ async def async_main(query, session_service, artifacts_service, session):
     print(f"User Query: '{query}'")
     content = types.Content(role='user', parts=[types.Part(text=query)])
 
-    root_agent, toolset_file_system = await get_agent_async()
+    root_agent, toolset_file_system, toolset_manage_react_project = await get_agent_async()
 
     runner = Runner(
         app_name='mcp_filesystem_app',
@@ -69,7 +79,6 @@ async def async_main(query, session_service, artifacts_service, session):
     async for event in events_async:
         if event.is_final_response():
             if event.content and event.content.parts:
-                # Assuming text response in the first part
                 try:
                     print(event.content.parts[0].text)
                 except Exception as e:
@@ -85,8 +94,10 @@ async def async_main(query, session_service, artifacts_service, session):
                 return final_response_text
             except Exception as e:
                 print(str(e))
+                return("done !")
     print("Closing MCP server connection...")
     await toolset_file_system.close()
+    await toolset_manage_react_project.close()
     print("Cleanup complete.")
 
 import traceback
