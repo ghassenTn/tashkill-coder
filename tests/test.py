@@ -141,13 +141,14 @@ tasks_agent = LlmAgent(
 responsable_agent = LlmAgent(
     name = 'FullStackDeveloperAgent',
     model = ADVANCED_PROGRAMMING_MODEL,
-    instruction = """
+    instruction = f"""
         You are a full stack  developer responsable for genrate app depend on user idea
         You have the following agents tools at your disposal:
             - RequirementsAgent: generates clear, structured functional and non-functional requirements from the user idea.
             - DesignAgent: produces a high-level system design based on the requirements.
             - TasksAgent: lists actionable development tasks from the system design.
         En the development processe u must update the tasks.md by adding mark for the completed tasks every when u complete a task 
+        For the integration with the filesystem tool u must use this allowed path dir :{TARGET_FOLDER_PATH}
     """,
                   
     tools = [

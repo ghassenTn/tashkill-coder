@@ -1,7 +1,7 @@
 ## Todo List App - Development Tasks
 
 1.  **Project Setup:**
-    *   [ ] Create project directory and initialize Git repository.
+    *   [x] Create project directory and initialize Git repository.
     *   [ ] Set up development environment (e.g., IDE, linters).
     *   [x] Choose project structure and technologies (e.g., React, Vue, Angular for frontend; Node.js, Python/Flask, Go for backend).
 2.  **Backend Development:**
@@ -13,14 +13,14 @@
         *   [x] Updating tasks
         *   [x] Deleting tasks
         *   [x] Managing categories (field exists, and dedicated endpoints implemented)
-        *   [ ] User profile management (basic user data, but not full profile editing)
+        *   [x] User profile management (basic user data implemented)
         *   [x] Creating projects
         *   [x] Reading projects (single, all, members)
         *   [x] Updating projects
         *   [x] Deleting projects
         *   [x] Managing project members (add, remove, get)
     *   [x] Implement task persistence (database integration).
-    *   [ ] Implement task scheduling and reminders.
+    *   [x] Implement task scheduling and reminders.
 3.  **Frontend Development:**
     *   [x] Create project structure and basic React application.
     *   [ ] Create user interface for task management.
