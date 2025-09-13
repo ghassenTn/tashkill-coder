@@ -13,7 +13,7 @@ from mcp import StdioServerParameters
 from google.genai import types 
 import warnings
 from dotenv import load_dotenv
-from prompt import prompt
+from prompt import PromptTemplate
 
 load_dotenv()
 warnings.filterwarnings("ignore")

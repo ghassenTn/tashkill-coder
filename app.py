@@ -11,8 +11,8 @@ load_dotenv()
 
 # Enhanced page configuration
 st.set_page_config(
-    page_title="Tashkil Coder - AI Development Assistant",
-    page_icon="🚀",
+    page_title="Tashkil Coder",
+    page_icon=":material/code:",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -96,7 +96,7 @@ st.logo("assets/logos/tashkill-coder.png", size="large")
 
 # Environment variables
 FOLDER_PATH = os.getenv('TARGET_FOLDER_PATH')
-MODEL = os.getenv('MODEL')
+MODEL = os.getenv('ADVANCED_PROGRAMMING_MODEL')
 APP_NAME = "dev_app"
 USER_ID = "12345"
 SESSION_ID = "123344"
@@ -151,8 +151,8 @@ if "theme" not in st.session_state:
 with st.sidebar:
     # Chat container with enhanced styling
     with st.container():
-        st.markdown("### 📝 Conversation History")
-        msg_container = st.container(height=500, border=True)
+        # st.markdown("### :material/chat: Conversation History")
+        msg_container = st.container(height=700, border=False)
         
         with msg_container:
             if not st.session_state.messages:
@@ -166,11 +166,11 @@ with st.sidebar:
                 for message in st.session_state.messages:
                     with st.chat_message(
                         message["role"], 
-                        avatar="🤖" if message["role"] == "assistant" else "👨‍💻"
+                        avatar=":material/neurology:" if message["role"] == "assistant" else ":material/alternate_email:"
                     ):
                         st.markdown(message["content"])
     
-    st.divider()
+    # st.divider()
     
     # Input section with model selector
     col1, col2 = st.columns([4, 1.2])
@@ -179,7 +179,7 @@ with st.sidebar:
         prompt = st.chat_input("💭 Type your message...", key="chat_input")
         if prompt:
             # Show loading spinner
-            with st.spinner("🤔 Thinking..."):
+            with st.spinner(":material/sync: Thinking..."):
                 if "session_model" not in st.session_state:
                     st.session_state.session_model = create_session()
                 session_model: SessionModel = st.session_state.session_model
@@ -193,7 +193,7 @@ with st.sidebar:
                 st.rerun()
     
     with col2:
-        with st.popover("⚙️ Model", use_container_width=True):
+        with st.popover(":material/settings: Model", use_container_width=True):
             st.markdown(f"""
                 <div style='padding: 0.5rem;'>
                     <div style='display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;'>
@@ -224,13 +224,12 @@ with st.sidebar:
 def ide():
     # Enhanced header with gradient
     st.markdown("""
-        <div style='padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
-            <h1 style='color: white; margin: 0; font-size: 2.5rem;'>
-                🚀 Tashkil Coder
+        <div style='padding-bottom: 1rem;'>
+            <h1 style='font-size: 2.5rem; background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; color: transparent;'>
+                🚀 Tashkil Coder IDE
             </h1>
-            <p style='color: rgba(255,255,255,0.9); margin-top: 0.5rem; font-size: 1.1rem;'>
-                Create and enhance your web applications with our full-stack AI development assistant
+            <p style='color: rgba(255,255,255,0.8); font-size: 1.1rem;'>
+                Your AI-powered development environment.
             </p>
         </div>
     """, unsafe_allow_html=True)
@@ -239,32 +238,32 @@ def ide():
     col1, col2, col3, col4, col5 = st.columns([3, 1.5, 1.5, 1, 2])
     
     with col1:
-        st.markdown("### 📁 Project Explorer")
+        st.markdown("### :material/folder_code: Project Explorer")
     
     with col2:
         if os.path.exists(FOLDER_PATH) and os.listdir(FOLDER_PATH):
             zip_path = shutil.make_archive("project_source", "zip", FOLDER_PATH)
             with open(zip_path, "rb") as fp:
                 st.download_button(
-                    label="⬇️ Download Source",
+                    label=":material/arrow_circle_down: Download Source",
                     data=fp,
                     file_name="project_source.zip",
                     mime="application/zip",
                     use_container_width=True
                 )
         else:
-            st.button("⬇️ Download Source", disabled=True, use_container_width=True)
+            st.button(":material/arrow_circle_down: Download Source", disabled=True, use_container_width=True)
     
     with col3:
-        if st.button("🔗 Push to GitHub", use_container_width=True):
-            st.warning("⚠️ Please configure your GitHub access token first!")
+        if st.button(":material/commit: Push to GitHub", use_container_width=True):
+            st.toast(" :material/warning: Please configure your GitHub access token first!")
     
     with col4:
-        if st.button("🔄 Refresh", use_container_width=True):
+        if st.button(":material/refresh: Refresh", use_container_width=True):
             st.rerun()
     
     with col5:
-        search_query = st.text_input("🔍 Search files...", label_visibility="collapsed", 
+        search_query = st.text_input(":material/search: Search files...", label_visibility="collapsed", 
                                     placeholder="Search files...")
     
     st.divider()
@@ -369,7 +368,7 @@ def ide():
         if not os.listdir(FOLDER_PATH):
             # Empty folder message with call to action
             st.info("""
-                📂 **Project folder is empty**  
+                :material/folder_code: **Project folder is empty**  
                 Start by typing a command in the chat to generate your first files!
                 
                 Try something like:
@@ -388,11 +387,11 @@ def ide():
                 <div style='display: flex; gap: 2rem; margin-bottom: 1rem;'>
                     <div style='padding: 0.5rem 1rem; background: rgba(102, 126, 234, 0.1); 
                                 border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.3);'>
-                        📄 <strong>{total_files}</strong> Files
+                         <strong>{total_files}</strong> Files
                     </div>
                     <div style='padding: 0.5rem 1rem; background: rgba(118, 75, 162, 0.1); 
                                 border-radius: 8px; border: 1px solid rgba(118, 75, 162, 0.3);'>
-                        📁 <strong>{total_dirs}</strong> Folders
+                        <strong>{total_dirs}</strong> Folders
                     </div>
                 </div>
             """, unsafe_allow_html=True)
@@ -412,7 +411,7 @@ def agent_trace_page():
     st.markdown("""
         <div style='padding: 2rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
                     border-radius: 16px; margin-bottom: 2rem;'>
-            <h1 style='color: white; margin: 0;'>🔍 Agent Trace</h1>
+            <h1 style='color: white; margin: 0;'>:materi: Agent Trace</h1>
             <p style='color: rgba(255,255,255,0.9); margin-top: 0.5rem;'>
                 Monitor and debug your AI agent's activity in real-time
             </p>
@@ -443,21 +442,22 @@ def agent_trace_page():
     # Placeholder for trace content
     trace_container = st.container()
     with trace_container:
-        st.info("🔄 Agent trace will appear here when the agent is active...")
-        
-        # Sample trace data (replace with actual implementation)
-        with st.expander("📍 Sample Trace Entry", expanded=True):
-            st.code("""
-[2024-01-15 10:23:45] INFO: Agent initialized
-[2024-01-15 10:23:46] DEBUG: Processing user request: "Create a React component"
-[2024-01-15 10:23:47] INFO: Generating code...
-[2024-01-15 10:23:48] SUCCESS: Code generated successfully
-            """, language="log")
-
+        st.info(":material/refresh: Agent trace will appear here when the agent is active...")
+        # open logs.log file and display its content
+        if os.path.exists('logs.log'):
+            with open('logs.log', 'r') as f:
+                logs = f.read()
+                if logs:
+                    st.markdown(logs, unsafe_allow_html=True)
+                else:
+                    st.info("No logs available yet.")
+        else:
+            st.info("No logs available yet.")
+    
 # Navigation setup with custom styling
 pages = [
-    st.Page(ide, title="IDE", icon="🖥️"),
-    st.Page(agent_trace_page, title="Agent Trace", icon="🔍"),
+    st.Page(ide, title="IDE", icon=":material/code:"),
+    st.Page(agent_trace_page, title="Agent Trace", icon=":material/eye_tracking:"),
 ]
 
 # Run navigation

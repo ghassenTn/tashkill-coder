@@ -12,6 +12,8 @@ from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 from google.adk.runners import Runner
 from google.adk.events import Event
+from pydantic import BaseModel, Field
+from prompt import PromptTemplate
 from dotenv import load_dotenv
 import traceback
 import json
@@ -28,6 +30,27 @@ TARGET_FOLDER_PATH = os.getenv('TARGET_FOLDER_PATH')
 # --- Configure Logging ---
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+#  set logging into logs.log file
+# delete it if exists
+if os.path.exists('logs.log'):
+    os.remove('logs.log')
+file_handler = logging.FileHandler('logs.log')
+file_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+
+class AgentRequirementsInput(BaseModel):
+    app_idea : str = Field(description = 'the application idea')
+
+class AgentDesignInput(BaseModel):
+    app_requirements : str = Field(description = 'the application requirements')
+
+class AgentTasksInput(BaseModel):
+    app_design : str = Field(description = 'the application design')
+
+
 
 
 # --- Custom Orchestrator Agent ---
@@ -114,7 +137,7 @@ requirements_agent = LlmAgent(
     instruction='''You are a software analyst. Take the user idea and generate clear, structured functional and non-functional requirements.'''
                 "u must generate ur work and make it in file named requirements.md using your tool for u can create and write files",
     tools=[toolset_file_system],
-    input_schema=None,
+    input_schema=AgentRequirementsInput,
     output_key="requirements_doc",
 )
 
@@ -124,7 +147,7 @@ design_agent = LlmAgent(
     instruction='''You are a system architect. Based on the requirements, produce a high-level system design: architecture, components, and data flow.'''
                     "u must generate ur work and make it in file named design.md using your tool for u can create and write files",
     tools=[toolset_file_system],
-    input_schema=None,
+    input_schema=AgentDesignInput,
     output_key="design_doc",
 )
 
@@ -134,7 +157,7 @@ tasks_agent = LlmAgent(
     instruction='''You are a project planner. From the system design, list actionable development tasks in a logical order (like a backlog).'''
                     "u must generate ur work and make it in file named tasks.md using your tool for u can create and write files",
     tools=[toolset_file_system],
-    input_schema=None,
+    input_schema=AgentTasksInput,
     output_key="tasks_list",
 )
 
