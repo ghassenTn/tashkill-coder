@@ -1,13 +1,14 @@
 import asyncio
 import shutil
 import streamlit as st
-from google.adk.sessions import InMemorySessionService
-from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService 
-from pydantic import BaseModel
 import os 
-from dotenv import load_dotenv
-from tests.test import run_agent
-load_dotenv()
+from pydantic import BaseModel
+
+# Import from new modular structure
+from main import run_agent_async
+from src.config import get_settings
+from src.services import create_session_manager
+from src.utils import setup_logging
 
 # Enhanced page configuration
 st.set_page_config(
@@ -94,30 +95,24 @@ st.markdown("""
 # Logo with enhanced styling
 st.logo("assets/logos/tashkill-coder.png", size="large")
 
-# Environment variables
-FOLDER_PATH = os.getenv('TARGET_FOLDER_PATH')
-MODEL = os.getenv('ADVANCED_PROGRAMMING_MODEL')
-APP_NAME = "dev_app"
-USER_ID = "12345"
-SESSION_ID = "123344"
+# Initialize settings and logging
+settings = get_settings()
+logger = setup_logging()
+
+# Environment variables from settings
+FOLDER_PATH = settings.target_folder_absolute_path
+MODEL = settings.advanced_programming_model
 
 class SessionModel(BaseModel):
-    session_service: object
-    artifacts_service: object
-    session: object
+    """Legacy session model for compatibility"""
+    session_manager: object
+    model_config = {"arbitrary_types_allowed": True}
 
 # Session management functions
 async def create_session_async():
-    session_service = InMemorySessionService()
-    artifacts_service = InMemoryArtifactService()
-    session = await session_service.create_session(
-        app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
-    )
-    return SessionModel(
-        session_service=session_service,
-        artifacts_service=artifacts_service,
-        session=session,
-    )
+    """Create session using new modular structure"""
+    session_manager = await create_session_manager()
+    return SessionModel(session_manager=session_manager)
 
 def get_or_create_event_loop():
     try:
@@ -133,12 +128,8 @@ def create_session():
 
 # Response generator
 async def response_generator(prompt: str, session_model: SessionModel):
-    response = await run_agent(
-        prompt,
-        session_model.session_service,
-        session_model.artifacts_service,
-        session_model.session,
-    )
+    """Generate response using new modular structure"""
+    response = await run_agent_async(prompt, session_model.session_manager)
     return response
 
 # Initialize session state
@@ -218,7 +209,7 @@ with st.sidebar:
                     User: {USER_ID}
                 </p>
             </div>
-        """.format(SESSION_ID=SESSION_ID[:8], USER_ID=USER_ID), unsafe_allow_html=True)
+        """.format(SESSION_ID=settings.session_id[:8], USER_ID=settings.user_id), unsafe_allow_html=True)
 
 # Main IDE Function
 def ide():
