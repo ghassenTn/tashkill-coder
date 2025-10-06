@@ -27,6 +27,7 @@ def create_specialized_agents() -> Dict[str, Any]:
             "👉 Organize them under structured headings.\n"
             "👉 Validate completeness and consistency before finalizing."
             "👉 Finally, save your output also in a requirements.md file."
+            F"For filesystem operations, use path: {settings.target_folder_absolute_path}"
         ),
         tools=[toolset_file_system],
         input_schema=AgentInputSchemas.RequirementsInput,
@@ -45,6 +46,7 @@ def create_specialized_agents() -> Dict[str, Any]:
             "👉 Use examples or diagrams (in text/ASCII) if useful.\n"
             "👉 Review for clarity and feasibility before final output."
             "👉 Finally, save your output also in a design.md file."
+            F"For filesystem operations, use path: {settings.target_folder_absolute_path}"
         ),
         tools=[toolset_file_system],
         input_schema=AgentInputSchemas.DesignInput,
@@ -59,10 +61,12 @@ def create_specialized_agents() -> Dict[str, Any]:
             "You are a project planner.\n"
             "👉 Take the design as input and reason step by step.\n"
             "👉 Break it down into actionable development tasks.\n"
+            "👉👉👉👉👉👉👉👉 tasks must be numeroted and unchecked for we can after complete task we check it  "
             "👉 Organize tasks in logical order (like backlog / sprint planning).\n"
             "👉 Clearly indicate dependencies between tasks.\n"
             "👉 Ensure tasks are small, testable, and unambiguous."
             "👉 Finally, save your output also in a tasks.md file."
+            F"For filesystem operations, use path: {settings.target_folder_absolute_path}"
         ),
         tools=[toolset_file_system],
         input_schema=AgentInputSchemas.TasksInput,
@@ -74,28 +78,21 @@ def create_specialized_agents() -> Dict[str, Any]:
         name='FullStackDeveloperAgent',
         model=settings.advanced_programming_model,
         instruction=f"""
-        You are a full stack developer responsible for generating apps based on user ideas.
+        You are a full stack developer responsible for generating apps based on user idea and tasks.md file .
         
         🛠️ Tools available:
-            - RequirementsAgent → generate structured requirements.
-            - DesignAgent → create high-level design with reasoning.
-            - TasksAgent → generate backlog-style task list.
+            - 👉👉👉👉👉👉👉👉👉 toolset_file_system -> manage file system (read, write, create, search ... etc)
         
         ⚡ Guidelines:
+        - First step check the requirements.md , design.md , tasks.md  files and depend the tasks.md file start develop the app step by step  
         - Always think step by step (Chain of Thought).
-        - Use reasoning before choosing the right tool.
-        - u must go step by step and use the tools in order.
-        - each tool will generate a markdown file automatically in the target folder.
         - ask for confirmation in each step.
-        - Finally, using the tasks.md file, generate the complete codebase.
+        - using the tasks.md file, generate the complete codebase.
         - Ensure code quality, modularity, and best practices.
-        - always update the tasks.md file with progress.
+        - 👉👉👉👉👉👉👉👉👉 after complete a task mark it as completed by checked it .
         For filesystem operations, use path: {settings.target_folder_absolute_path}
         """,
         tools=[
-            AgentTool(agent=requirements_agent),
-            AgentTool(agent=design_agent),
-            AgentTool(agent=tasks_agent),
             toolset_file_system,
         ]
     )
