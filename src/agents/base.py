@@ -17,3 +17,18 @@ class AgentInputSchemas:
     class TasksInput(BaseModel):
         """Input schema for tasks generation agent"""
         app_design: str = Field(description='The application design')
+    
+class AgentOutputSchemas:
+    """Output schemas for different agent types"""
+    
+    class RequirementsOutput(BaseModel):
+        """Output schema for requirements generation agent"""
+        requirements_doc: str = Field(description='The generated requirements document')
+
+    class DesignOutput(BaseModel):
+        """Output schema for design generation agent"""
+        design_doc: str = Field(description='The generated design document')
+
+    class TasksOutput(BaseModel):
+        """Output schema for tasks generation agent"""
+        tasks_doc: str = Field(description='The generated tasks document')

@@ -4,7 +4,7 @@ import logging
 from typing import AsyncGenerator, Dict, Any
 from typing_extensions import override
 
-from google.adk.agents import BaseAgent, LlmAgent
+from google.adk.agents import BaseAgent, LlmAgent, SequentialAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
@@ -24,6 +24,7 @@ class DevFlowAgent(BaseAgent):
     requirements_agent: LlmAgent
     design_agent: LlmAgent
     tasks_agent: LlmAgent
+    project_workflow: SequentialAgent
     responsible_agent: LlmAgent 
     toolset_file_system: MCPToolset
     
@@ -35,6 +36,7 @@ class DevFlowAgent(BaseAgent):
         requirements_agent: LlmAgent,
         design_agent: LlmAgent,
         tasks_agent: LlmAgent,
+        project_workflow: SequentialAgent,
         responsible_agent: LlmAgent,
         toolset_file_system: MCPToolset
     ):
@@ -58,6 +60,7 @@ class DevFlowAgent(BaseAgent):
             requirements_agent=requirements_agent,
             design_agent=design_agent,
             tasks_agent=tasks_agent,
+            project_workflow=project_workflow,
             responsible_agent=responsible_agent,
             toolset_file_system=toolset_file_system,
             sub_agents=sub_agents_list,
@@ -77,87 +80,109 @@ class DevFlowAgent(BaseAgent):
             Events from the development process
         """
 
+        # Generate project workflow steps sequentially using the project_workflow agent if there is no existing state
+        # if ('project_workflow' and 'tasks_list') not in ctx.session.state or not ctx.session.state['project_workflow']:
+        #     logger.error(f"[{self.name}] Starting to generate project workflow steps.")
+        #     try:
+        #         logger.info(f"[{self.name}] Starting project workflow generation.")
+        #         async for event in self.project_workflow.run_async(ctx):
+        #             logger.info(
+        #                 f"[{self.name}] Event from workflow: "
+        #                 f"{event.model_dump_json(indent=2, exclude_none=True)}"
+        #             )
+        #             yield event
+        #     except Exception as e:
+        #         logger.error(f"Error in {self.name}: {e}")
+        #         raise e
+        #     finally:
+        #         # Clean up resources
+        #         if self.toolset_file_system:
+        #             try:
+        #                 await self.toolset_file_system.close()
+        #                 logger.info(f"[{self.name}] Toolset closed successfully")
+        #             except Exception as e:
+        #                 logger.warning(f"[{self.name}] Error closing toolset: {e}")
+
+        #     logger.info(f"[{self.name}] Project state after generating workflow: {ctx.session.state.get('project_workflow')}")
+
+        # # generate project requirements
+        # if 'requirements_doc' not in ctx.session.state or not ctx.session.state['requirements_doc']:
+        #     logger.error(f"[{self.name}] Starting to generate project requirements .")
+        #     try:
+        #         logger.info(f"[{self.name}] Starting project  requirement ")
+        #         async for event in self.requirements_agent.run_async(ctx):
+        #             logger.info(
+        #                 f"[{self.name}] Event from workflow: "
+        #                 f"{event.model_dump_json(indent=2, exclude_none=True)}"
+        #             )
+        #             yield event
+        #     except Exception as e:
+        #         logger.error(f"Error in {self.name}: {e}")
+        #         raise e
+        #     finally:
+        #         # Clean up resources
+        #         if self.toolset_file_system:
+        #             try:
+        #                 await self.toolset_file_system.close()
+        #                 logger.info(f"[{self.name}] Toolset closed successfully")
+        #             except Exception as e:
+        #                 logger.warning(f"[{self.name}] Error closing toolset: {e}")
+
         
 
-        # generate project requirements
-        if 'requirements_doc' not in ctx.session.state or not ctx.session.state['requirements_doc']:
-            logger.error(f"[{self.name}] Starting to generate project requirements .")
-            try:
-                logger.info(f"[{self.name}] Starting project  requirement ")
-                async for event in self.requirements_agent.run_async(ctx):
-                    logger.info(
-                        f"[{self.name}] Event from workflow: "
-                        f"{event.model_dump_json(indent=2, exclude_none=True)}"
-                    )
-                    yield event
-            except Exception as e:
-                logger.error(f"Error in {self.name}: {e}")
-                raise e
-            finally:
-                # Clean up resources
-                if self.toolset_file_system:
-                    try:
-                        await self.toolset_file_system.close()
-                        logger.info(f"[{self.name}] Toolset closed successfully")
-                    except Exception as e:
-                        logger.warning(f"[{self.name}] Error closing toolset: {e}")
+        #     logger.info(f"[{self.name}] Project state after generate requirements: {ctx.session.state.get('requirements_doc')}")
 
-        
-
-            logger.info(f"[{self.name}] Project state after generate requirements: {ctx.session.state.get('requirements_doc')}")
-
-        # generate project design 
-        if 'design_doc' not in ctx.session.state or not ctx.session.state['design_doc'] :
-            logger.error(f"[{self.name}] Starting to generate project design .")
-            try:
-                logger.info(f"[{self.name}] Starting project  design  ")
-                async for event in self.design_agent.run_async(ctx):
-                    logger.info(
-                        f"[{self.name}] Event from workflow: "
-                        f"{event.model_dump_json(indent=2, exclude_none=True)}"
-                    )
-                    yield event
-            except Exception as e:
-                logger.error(f"Error in {self.name}: {e}")
-                raise e
-            finally:
-                # Clean up resources
-                if self.toolset_file_system:
-                    try:
-                        await self.toolset_file_system.close()
-                        logger.info(f"[{self.name}] Toolset closed successfully")
-                    except Exception as e:
-                        logger.warning(f"[{self.name}] Error closing toolset: {e}")
+        # # generate project design 
+        # if 'design_doc' not in ctx.session.state or not ctx.session.state['design_doc'] :
+        #     logger.error(f"[{self.name}] Starting to generate project design .")
+        #     try:
+        #         logger.info(f"[{self.name}] Starting project  design  ")
+        #         async for event in self.design_agent.run_async(ctx):
+        #             logger.info(
+        #                 f"[{self.name}] Event from workflow: "
+        #                 f"{event.model_dump_json(indent=2, exclude_none=True)}"
+        #             )
+        #             yield event
+        #     except Exception as e:
+        #         logger.error(f"Error in {self.name}: {e}")
+        #         raise e
+        #     finally:
+        #         # Clean up resources
+        #         if self.toolset_file_system:
+        #             try:
+        #                 await self.toolset_file_system.close()
+        #                 logger.info(f"[{self.name}] Toolset closed successfully")
+        #             except Exception as e:
+        #                 logger.warning(f"[{self.name}] Error closing toolset: {e}")
             
 
-            logger.info(f"[{self.name}] Project state after generate design: {ctx.session.state.get('design_doc')}")
+        #     logger.info(f"[{self.name}] Project state after generate design: {ctx.session.state.get('design_doc')}")
 
 
-        # generate project tasks
-        if 'tasks_list' not in ctx.session.state or not ctx.session.state['tasks_list'] :
-            logger.error(f"[{self.name}] Starting  generate project tasks .")
-            try:
-                logger.info(f"[{self.name}] Starting project  tasks  ")
-                async for event in self.tasks_agent.run_async(ctx):
-                    logger.info(
-                        f"[{self.name}] Event from workflow: "
-                        f"{event.model_dump_json(indent=2, exclude_none=True)}"
-                    )
-                    yield event
-            except Exception as e:
-                logger.error(f"Error in {self.name}: {e}")
-                raise e
-            finally:
-                # Clean up resources
-                if self.toolset_file_system:
-                    try:
-                        await self.toolset_file_system.close()
-                        logger.info(f"[{self.name}] Toolset closed successfully")
-                    except Exception as e:
-                        logger.warning(f"[{self.name}] Error closing toolset: {e}")
+        # # generate project tasks
+        # if 'tasks_list' not in ctx.session.state or not ctx.session.state['tasks_list'] :
+        #     logger.error(f"[{self.name}] Starting  generate project tasks .")
+        #     try:
+        #         logger.info(f"[{self.name}] Starting project  tasks  ")
+        #         async for event in self.tasks_agent.run_async(ctx):
+        #             logger.info(
+        #                 f"[{self.name}] Event from workflow: "
+        #                 f"{event.model_dump_json(indent=2, exclude_none=True)}"
+        #             )
+        #             yield event
+        #     except Exception as e:
+        #         logger.error(f"Error in {self.name}: {e}")
+        #         raise e
+        #     finally:
+        #         # Clean up resources
+        #         if self.toolset_file_system:
+        #             try:
+        #                 await self.toolset_file_system.close()
+        #                 logger.info(f"[{self.name}] Toolset closed successfully")
+        #             except Exception as e:
+        #                 logger.warning(f"[{self.name}] Error closing toolset: {e}")
             
-            logger.info(f"[{self.name}] Project state after generate tasks: {ctx.session.state.get('tasks_list')}")
-
+        #     logger.info(f"[{self.name}] Project state after generate tasks: {ctx.session.state.get('tasks_list')}")
 
         try:
             logger.info(f"[{self.name}] Starting development workflow")
@@ -199,6 +224,7 @@ def create_dev_flow_agent() -> DevFlowAgent:
         requirements_agent=agents_config['requirements_agent'],
         design_agent=agents_config['design_agent'],
         tasks_agent=agents_config['tasks_agent'],
+        project_workflow=agents_config['project_workflow'],
         responsible_agent=agents_config['responsible_agent'],
         toolset_file_system=agents_config['toolset_file_system']
     )

@@ -7,7 +7,6 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-
 class Settings(BaseModel):
     """Application settings"""
     
@@ -18,7 +17,6 @@ class Settings(BaseModel):
     model: str = os.getenv('MODEL', 'gemini-1.5-flash')
     text_generation_model: str = os.getenv('TEXT_GENERATION_MODEL', 'gemini-1.5-flash')
     advanced_programming_model: str = os.getenv('ADVANCED_PROGRAMMING_MODEL', 'gemini-1.5-pro')
-    
     # Paths
     target_folder_path: str = os.getenv('TARGET_FOLDER_PATH', './output')
     react_manage_project_mcp_path: str = os.getenv('REACT_MANAGE_PROJECT_MCP_PATH', './tools.py')
