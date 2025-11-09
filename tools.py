@@ -134,7 +134,6 @@ def tashkil_list_dependencies() -> Dict[str, Any]:
     except Exception as e:
         return {'success': False, 'message': f'Error listing dependencies: {str(e)}'}
     
-    
 @mcp.tool('tashkil-add-dependency')
 def tashkil_add_dependency(package: str) -> Dict[str, Any]:
     """

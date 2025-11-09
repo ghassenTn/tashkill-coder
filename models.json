@@ -1,0 +1,102 @@
+[
+  {
+    "provider": "Z.AI",
+    "model": "z-ai/glm-4.5-air:free",
+    "tokens": "33B",
+    "context": "131K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "GLM-4.5-Air is the lightweight variant of our latest flagship model family, also purpose-built for agent-centric applications. Like GLM-4.5, it adopts the Mixture-of-Experts (MoE) architecture but with a more compact parameter size.",
+    "by": "z-ai"
+  },
+  {
+    "provider": "DeepSeek",
+    "model": "deepseek/deepseek-chat-v3-0324:free",
+    "tokens": "12.1B",
+    "context": "164K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "DeepSeek V3 is a 685B-parameter Mixture-of-Experts model optimized for reasoning, coding, and multi-task chat.",
+    "by": "deepseek"
+  },
+  {
+    "provider": "Qwen",
+    "model": "qwen/qwen3-235b-a22b:free",
+    "tokens": "6.94B",
+    "context": "131K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Qwen3-235B-A22B is a 235B parameter mixture-of-experts model supporting 100+ languages, tool use, and reasoning modes.",
+    "by": "qwen"
+  },
+  {
+    "provider": "Meituan",
+    "model": "meituan/longcat-flash-chat:free",
+    "tokens": "4.99B",
+    "context": "131K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "LongCat-Flash-Chat is a Mixture-of-Experts model optimized for conversational and agentic tasks with 128K context support.",
+    "by": "meituan"
+  },
+  {
+    "provider": "Google",
+    "model": "gemini-2.5-flash-preview-09-2025",
+    "tokens": "3.79B",
+    "context": "1.05M",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Gemini Flash 2.0 improves time-to-first-token and adds stronger multimodal, reasoning, and tool-use capabilities.",
+    "by": "google"
+  },
+  {
+    "provider": "Meta",
+    "model": "meta-llama/llama-3.3-70b-instruct:free",
+    "tokens": "3.26B",
+    "context": "66K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Llama 3.3 70B multilingual instruction-tuned model optimized for dialogue and text generation across 8 languages.",
+    "by": "meta-llama"
+  },
+  {
+    "provider": "Qwen",
+    "model": "qwen/qwen3-coder:free",
+    "tokens": "2.65B",
+    "context": "262K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Qwen3-Coder-480B-A35B-Instruct is a MoE model for coding, reasoning, and function calling with 35B active parameters.",
+    "by": "qwen"
+  },
+  {
+    "provider": "Mistral",
+    "model": "mistralai/mistral-small-3.2-24b-instruct:free",
+    "tokens": "1.46B",
+    "context": "131K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Mistral-Small-3.2-24B is an updated 24B parameter model optimized for function calling, coding, and structured output.",
+    "by": "mistralai"
+  },
+  {
+    "provider": "Meta",
+    "model": "meta-llama/llama-4-maverick:free",
+    "tokens": "1.21B",
+    "context": "128K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Llama 4 Maverick 17B multimodal Mixture-of-Experts model supporting image and text reasoning with 1M token context.",
+    "by": "meta-llama"
+  },
+  {
+    "provider": "Tongyi",
+    "model": "alibaba/tongyi-deepresearch-30b-a3b:free",
+    "tokens": "1.17B",
+    "context": "131K",
+    "price_input": "$0/M input tokens",
+    "price_output": "$0/M output tokens",
+    "description": "Tongyi DeepResearch is a 30B parameter MoE model optimized for long-horizon reasoning, search, and multi-step problem solving.",
+    "by": "alibaba"
+  }
+]

@@ -4,11 +4,8 @@ Main entry point for Tashkil Coder
 
 import asyncio
 import traceback
-from typing import Optional
-
 from google.genai import types
 
-from src.config import get_settings
 from src.utils import setup_logging
 from src.services import create_session_manager
 
@@ -16,7 +13,7 @@ from src.services import create_session_manager
 async def run_agent_async(
     query: str,
     session_manager=None
-) -> str:
+):
     """
     Run the agent with the given query
     
@@ -51,32 +48,19 @@ async def run_agent_async(
             user_id=session_manager.session.user_id,
             new_message=content
         )
-        
-        final_response_text = ""
-        
+                
         async for event in events_async:
-            if event.is_final_response():
-                if event.content and event.content.parts:
-                    try:
-                        response_text = event.content.parts[0].text
-                        logger.info(f"Agent response: {response_text}")
-                        final_response_text += response_text
-                    except Exception as e:
-                        logger.error(f"Error processing event: {e}")
-                        
-                elif event.actions and event.actions.escalate:
-                    error_msg = event.error_message or 'No specific message.'
-                    logger.warning(f"Agent escalated: {error_msg}")
+            yield event
         
         # Cleanup
         await session_manager.cleanup()
         
-        return final_response_text or "Task completed successfully!"
+        # return final_response_text or "Task completed successfully!"
         
     except Exception as e:
         logger.error(f"Error in run_agent_async: {e}")
         traceback.print_exc()
-        return f"An error occurred: {str(e)}"
+        # return f"An error occurred: {e}"
 
 
 def run_agent(query: str, session_service=None, artifacts_service=None, session=None) -> str:
